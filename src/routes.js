@@ -2,6 +2,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import Login from './pages/Login';
+import Feed from './pages/Feed';
 
 const Routes = createAppContainer(
     createStackNavigator({
@@ -10,6 +11,12 @@ const Routes = createAppContainer(
             navigationOptions: {
                 title: 'Entrar - News BME'
             },
+        },
+        Feed: {
+            screen: Feed,
+            navigationOptions: {
+                title: 'Notícias - News BME'
+            }
         }
     }, {
         defaultNavigationOptions: {

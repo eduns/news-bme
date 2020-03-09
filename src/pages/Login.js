@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function Login() {
+export default function Login({ navigation }) {
     const [email, setEmail ] = useState('');
     const [password, setPassword] = useState('');
 
     function handleSubmit() {
-
+        navigation.navigate('Feed')
     }
 
     function handleRegister() {
