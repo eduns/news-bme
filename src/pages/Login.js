@@ -1,24 +1,67 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationActions } from 'react-navigation';
+import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text, Alert } from 'react-native';
+
+import BackButton from '../components/BackButton';
+
+import store from '../utils/store';
 
 export default function Login({ navigation }) {
     const [email, setEmail ] = useState('');
     const [password, setPassword] = useState('');
 
     function handleSubmit() {
-        navigation.navigate('Feed')
+
+        if(store.get('user')) {
+            global.userIsLogged = true;
+            global.user = user;
+
+            const post = navigation.getParam('post');
+
+            if(post) {
+                navigation.dispatch(
+                    NavigationActions.navigate({
+                    routeName: 'MainStack',
+                    action: NavigationActions.navigate({
+                        routeName: 'Post',
+                        params: { post }
+                    })
+                  })
+                )
+            } else {
+                navigation.dispatch(
+                    NavigationActions.navigate({
+                        routeName: 'MainStack',
+                        action: NavigationActions.navigate({ routeName: 'Feed' })
+                  })
+                )
+            }
+        } else {
+            Alert.alert('Entrar', 'E-mail ou senha incorretos',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+        }
+
     }
 
     function handleRegister() {
-
+        navigation.dispatch(
+            NavigationActions.navigate({
+                routeName: 'LoginStack',
+                action: NavigationActions.navigate({
+                    routeName: 'Register'
+                })
+            })
+        )
     }
 
     return (
+        <>
         <View style={styles.container}>
-
             <TextInput
                 value={email}
+                autoCompleteType={'off'}
                 onChangeText={setEmail}
                 placeholder={'E-mail'}
                 style={styles.input}
@@ -26,6 +69,7 @@ export default function Login({ navigation }) {
 
             <TextInput
                 value={password}
+                autoCompleteType={'off'}
                 onChangeText={setPassword}
                 placeholder={'Senha'}
                 secureTextEntry={true}
@@ -38,11 +82,13 @@ export default function Login({ navigation }) {
             />
 
             <TouchableOpacity style={styles.register} onPress={handleRegister}>
-                <Text>Sou novo aqui. Quero me cadastrar</Text>
+                <Text style={{ fontSize: 15 }}>Não tem uma conta? Cadastre-se aqui</Text>
             </TouchableOpacity>
         </View>
-    );
 
+        <BackButton navDispatch={navigation.dispatch} backScreen={NavigationActions.back} />
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -62,6 +108,8 @@ const styles = StyleSheet.create({
         marginBottom: 30
     },
     register: {
-
+        marginTop: 20,
+        borderBottomWidth: 2,
+        borderBottomColor: '#006fa6'
     }
 });

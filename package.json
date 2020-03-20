@@ -9,23 +9,30 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.5",
+    "axios": "^0.19.1",
     "expo": "~36.0.0",
-    "expo-cli": "^3.13.1",
-    "global": "^4.4.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-drawer": "^2.5.1",
+    "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "~1.5.0",
     "react-native-reanimated": "~1.4.0",
     "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "2.0.0-alpha.12",
     "react-native-web": "~0.11.7",
-    "react-navigation": "^4.2.2",
-    "react-navigation-stack": "^2.2.3"
+    "react-navigation": "^3.0.9",
+    "react-navigation-stack": "^2.0.15",
+    "react-redux": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "babel-preset-expo": "~8.0.0"
   },
-  "private": true
+  "private": true,
+  "name": "news-bme",
+  "version": "1.0.0",
+  "repository": "https://github.com/eduns/news-bme.git",
+  "author": "Eduardo Nunes <edugenix@gmail.com>",
+  "license": "MIT"
 }
