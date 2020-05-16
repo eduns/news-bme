@@ -1,11 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 
-import store from '../utils/store';
+import { useSearchCategory } from '../context/SearchCategory';
+
+import store from '../utils/StoreData';
+import * as ColorTheme from '../utils/ColorTheme';
+import categoryUtil from '../utils/Category';
 
 export default function SideMenu({ navigation }) {
+    const { setSearchCategory } = useSearchCategory();
 
     function goToScreen(screen, screenStack) {
         navigation.dispatch(
@@ -21,12 +26,14 @@ export default function SideMenu({ navigation }) {
     return (
         <>
         <SafeAreaView style={styles.container}>
-            <Ionicons name='md-person' size={210} style={styles.sideMenuProfileIcon} />
-            
+            <Image
+                style={styles.sideMenuImgProfile}
+                source={global.userIsLogged? {uri: global.user.imgProfile}: require('../assets/profile-placeholder.png')}
+            />
+
             {global.userIsLogged? (
-                <View style={{...styles.menuItem,
-                    justifyContent: 'center',
-                    backgroundColor: '#006fa6'}}>
+                <View style={[styles.menuItem, {justifyContent: 'center', backgroundColor: ColorTheme.Modes.DARK,
+                marginTop: 5, borderBottomWidth: 0, height: 40}]}>
                     <Text style={{...styles.menuItemFont, fontWeight: 'bold', color: 'white' }}>{global.user.name}</Text>
                 </View>
             ): null}
@@ -35,44 +42,65 @@ export default function SideMenu({ navigation }) {
                 <View style={styles.divider} />
 
                 <View style={{ width: '100%' }}>
-                    <View style={styles.menuItem} key={'Login'}>
-                        <View style={styles.menuItemIcon}>
-                            <Ionicons name={global.userIsLogged? 'md-log-out' : 'md-log-in'} size={20} />
-                        </View>
-
-                        <Text style={styles.menuItemFont} onPress={() => {
+                    <TouchableOpacity
+                        activeOpacity={0.4}
+                        style={styles.menuItem}
+                        key={'Login'}
+                        onPress={() => {
                             if(global.userIsLogged) {
-
-                                if(store.delete('user')) {
-                                    global.userIsLogged = false;
-                                    global.user = null;
-                                    goToScreen('Feed', 'MainStack')
-                                } else {
-                                    Alert.alert('Sair', 'Ocorreu um erro ao encerrar sua sessão',
-                                        [ { text: 'Entendi' } ],
-                                        { cancelable: false }
-                                    )
-                                }
-
+                                global.user = null;
+                                global.userIsLogged = false;
+                                navigation.toggleDrawer()
                             } else {
                                 goToScreen('Login', 'LoginStack')
                             }
-                        }}>
-                           {global.userIsLogged? 'Sair': 'Entrar'}
-                        </Text>
-                    </View>
-
-                    <View style={styles.menuItem} key={'Feed'}>
+                        }}
+                    >
                         <View style={styles.menuItemIcon}>
-                            <Ionicons name='md-paper' size={20} />
+                            <Ionicons name={global.userIsLogged ? 'md-log-out' : 'md-log-in'} size={24} color={ColorTheme.Modes.MILD} />
                         </View>
 
-                        <Text style={styles.menuItemFont} onPress={() => goToScreen('Feed', 'MainStack')}>
+                        <Text style={styles.menuItemFont}>
+                           {global.userIsLogged? 'Sair': 'Entrar'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        activeOpacity={0.4}
+                        style={styles.menuItem}
+                        key={'Feed'}
+                        onPress={() => {
+                            navigation.toggleDrawer()
+                            setSearchCategory('ALL')
+                        }}
+                        >
+                        <View style={styles.menuItemIcon}>
+                            <Ionicons name='md-paper' size={24} />
+                        </View>
+
+                        <Text style={styles.menuItemFont}>
                             Notícias
                         </Text>
-                    </View>
+                    </TouchableOpacity>
 
-                    {/* Categorias das notícias nested aqui */}
+                    {categoryUtil.CATEGORIES.map(category => (
+                        <TouchableOpacity
+                        activeOpacity={0.4}
+                        style={styles.menuItem}
+                        key={category.name}
+                        onPress={() => {
+                            navigation.toggleDrawer()
+                            setSearchCategory(category.name)
+                        }}
+                        >
+                            <View style={styles.menuItemIcon}>
+                                <Ionicons name={category.icon} size={24} />
+                            </View>
+                            <Text style={styles.menuItemFont}>
+                                {categoryUtil.translate(category.name)}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
                 </View>
             </View>
         </SafeAreaView>
@@ -87,47 +115,63 @@ export default function SideMenu({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#ecf0f1'
     },
+
     divider: {
         width: '100%',
-        height: 1,
-        backgroundColor: '#e2e2e2',
-        marginTop: 15,
-        marginBottom: 4
+        height: 2,
+        backgroundColor: '#e2e2e2'
     },
+
     menuItemFont: {
         fontSize: 18,
         color: 'black'
     },
+
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingTop: 10,
         paddingBottom: 10,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 2,
+        borderBottomColor: '#e2e2e2'
     },
+
     menuItemIcon: {
         marginRight: 10,
         marginLeft: 20
     },
+
     sideMenuContainer: {
         width: '100%',
+        top: 10,
         backgroundColor: '#fff',
         alignItems: 'center',
-        paddingTop: 0,
+        paddingTop: 0
     },
-    sideMenuProfileIcon: {
-        marginTop: 10,
-        marginLeft: 50,
-        borderRadius: 150 / 2,
+
+    sideMenuImgProfile: {
+        height: 200,
+        width: 200,
+        marginTop: 35,
+        marginLeft: 40,
+        borderRadius: 100,
+        borderWidth: 2,
+        borderColor: ColorTheme.Modes.DARK
     },
+
     footerContainer: {
-        padding: 20,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: 'lightgrey'
     },
+
     footerText: {
         fontFamily: 'monospace',
         fontWeight: 'bold',
-        fontSize: 15
+        fontSize: 20
     }
 });

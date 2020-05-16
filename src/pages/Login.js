@@ -1,48 +1,60 @@
 import React, { useState } from 'react';
 import { NavigationActions } from 'react-navigation';
-import { StyleSheet, View, TextInput, Button, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, Image, TouchableOpacity, Text, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import BackButton from '../components/BackButton';
 
-import store from '../utils/store';
+import store from '../utils/StoreData';
+import * as ColorTheme from '../utils/ColorTheme';
 
 export default function Login({ navigation }) {
     const [email, setEmail ] = useState('');
     const [password, setPassword] = useState('');
 
-    function handleSubmit() {
+    async function handleSubmit() {
+        const user = await store.get(`user_${email}`);
 
-        if(store.get('user')) {
-            global.userIsLogged = true;
-            global.user = user;
+        if(user) {
+            if(user.email === email && user.password === password) {
+                global.userIsLogged = true;
+                global.user = user;
 
-            const post = navigation.getParam('post');
+                setEmail('');
+                setPassword('')
 
-            if(post) {
-                navigation.dispatch(
-                    NavigationActions.navigate({
-                    routeName: 'MainStack',
-                    action: NavigationActions.navigate({
-                        routeName: 'Post',
-                        params: { post }
-                    })
-                  })
-                )
+                const post = navigation.getParam('post');
+
+                if(post) {
+                    navigation.dispatch(
+                        NavigationActions.navigate({
+                            routeName: 'MainStack',
+                            action: NavigationActions.navigate({
+                                routeName: 'Post',
+                                params: { post }
+                            })
+                        })
+                    )
+                } else {
+                    navigation.dispatch(
+                        NavigationActions.navigate({
+                            routeName: 'MainStack',
+                            action: NavigationActions.navigate({ routeName: 'Feed' })
+                        })
+                    )
+                }
             } else {
-                navigation.dispatch(
-                    NavigationActions.navigate({
-                        routeName: 'MainStack',
-                        action: NavigationActions.navigate({ routeName: 'Feed' })
-                  })
+                Alert.alert('Entrar', 'E-mail ou senha incorretos',
+                    [ { text: 'Entendi' } ],
+                    { cancelable: false }
                 )
             }
         } else {
-            Alert.alert('Entrar', 'E-mail ou senha incorretos',
+            Alert.alert('Entrar', 'Credenciais inexistentes',
                 [ { text: 'Entendi' } ],
                 { cancelable: false }
             )
         }
-
     }
 
     function handleRegister() {
@@ -59,9 +71,14 @@ export default function Login({ navigation }) {
     return (
         <>
         <View style={styles.container}>
+            <Image
+                style={styles.logo}
+                source={require('../assets/news-bme.png')}
+            />
+
             <TextInput
                 value={email}
-                autoCompleteType={'off'}
+                removeClippedSubviews={false}
                 onChangeText={setEmail}
                 placeholder={'E-mail'}
                 style={styles.input}
@@ -69,17 +86,20 @@ export default function Login({ navigation }) {
 
             <TextInput
                 value={password}
-                autoCompleteType={'off'}
                 onChangeText={setPassword}
                 placeholder={'Senha'}
                 secureTextEntry={true}
                 style={styles.input}
             />
 
-            <Button
-                title={'Entrar'}
+            <TouchableOpacity
+                activeOpacity={0.6}
+                style={[styles.button, {justifyContent: 'space-evenly', flexDirection: 'row'}]}
                 onPress={handleSubmit}
-            />
+            >
+                <Ionicons name='md-log-in' size={32} color='#fff' />
+                <Text style={styles.buttonText}>Entrar</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.register} onPress={handleRegister}>
                 <Text style={{ fontSize: 15 }}>Não tem uma conta? Cadastre-se aqui</Text>
@@ -93,23 +113,47 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 0.9,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#ecf0f1',
+        backgroundColor: '#ecf0f1'
     },
+
+    logo: {
+        width: 230,
+        height: 230,
+        marginBottom: 4
+    },
+
     input: {
-        width: '77%',
-        height: 44,
+        width: '80%',
+        height: 50,
         padding: 10,
-        fontSize: 16,
+        fontSize: 18,
         borderWidth: 1,
-        borderColor: '#006fa6',
-        marginBottom: 30
+        borderColor: ColorTheme.Modes.DARK,
+        marginBottom: 15,
+        borderRadius: 10
     },
+
+    button: {
+        width: 140,
+        height: 50,
+        borderRadius: 10,
+        backgroundColor: ColorTheme.Modes.DARK,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16
+    },
+
     register: {
         marginTop: 20,
         borderBottomWidth: 2,
-        borderBottomColor: '#006fa6'
+        borderBottomColor: ColorTheme.Modes.DARK
     }
 });

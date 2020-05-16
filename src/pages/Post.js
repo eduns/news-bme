@@ -1,24 +1,8 @@
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
-import { NavigationActions } from 'react-navigation';
-
-import News from '../components/News';
-import BackButton from '../components/BackButton';
+import { View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function Post({ navigation }) {
     const post = navigation.getParam('post');
-    return (
-        <>
-        <ScrollView>
-            <News data={post} isPreview={false} />
-        </ScrollView>
-
-        <BackButton navDispatch={navigation.dispatch} backScreen={NavigationActions.back} />
-        </>
-    )
+    return <WebView source={{ uri: post.url}} style={{flex: 1}} />
 }
-
-const styles = StyleSheet.create({
-    container: {
-    }
-})
