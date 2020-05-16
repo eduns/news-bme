@@ -1,35 +1,48 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-function News({data, isPreview}) {
+import categoryUtil from '../utils/Category';
+import * as ColorTheme from '../utils/ColorTheme';
+
+function News({ data }) {
+    const datePublished = new Date(data.datePublished);
+    const [month, day, year] = datePublished.toLocaleDateString().split('/');
+    const [hour, minute] = datePublished.toLocaleTimeString().split(':');
 
     return (
-        <View style={isPreview? previewStyle.container : styles.container}>
-            <View style={styles.subjectBox}>
-                <Text style={styles.subjectText}>{data.subject}</Text>
+        <View style={styles.container}>
+            <View style={[styles.labelBox, {backgroundColor: ColorTheme.Modes.DARK}]}>
+                <Text style={[styles.labelText, {color: data.category? '#fff':'yellow'}]}>
+                    {data.category? categoryUtil.translate(data.category):'nocategory'}
+                </Text>
             </View>
-            <View style={isPreview? previewStyle.content : styles.content}>
-                <View style={isPreview? {flexDirection: 'row'}: null}>
-                    {
-                        isPreview? (
-                            <>
-                            <Image style={previewStyle.image} source={data.imgSrc}/>
-                            <View style={previewStyle.titleBox}>
-                                <Text style={previewStyle.title}>{data.title}</Text>
-                            </View>
-                            </>
-                        ) : (
-                            <>
-                            <Text style={styles.title}>{data.title}</Text>
-                            <Image style={styles.image} source={data.imgSrc}/>
-                            </>
-                        )
-                    }
+            <View style={[styles.labelBox, {backgroundColor: '#fff'}]}>
+                <Text style={[styles.labelText, {color: ColorTheme.Modes.MILD}]}>
+                    Publicado em {day}/{month}/{year} às {hour}:{minute}
+                </Text>
+            </View>
+            <View style={styles.content}>
+                <View style={{ flexDirection: 'row' }}>
+                    <>
+                    <Image style={styles.image}
+                        source={{uri: data.image.thumbnail?
+                            data.image.thumbnail.contentUrl :
+                            require('../assets/noimageavailable.png') }}
+                    />
+                    <View style={styles.titleBox}>
+                        <Text style={styles.title}>{data.name}</Text>
+                    </View>
+                    </>
+                </View>
+                <View style={[styles.labelBox,
+                    { backgroundColor: ColorTheme.Modes.GRAY, borderRadius: 5 }]}>
+                    <Text style={[styles.labelText, {color: '#fff'}]}>
+                        {data.provider[0].name}
+                    </Text>
                 </View>
                 <View style={styles.textBox}>
-                    <Text style={isPreview? previewStyle.text : styles.text}>
-                        {isPreview? `${data.text.substring(0, data.text.length * .25)} (...)`
-                        : data.text}
+                    <Text style={styles.text}>
+                        {`${data.description} (...)`}
                     </Text>
                 </View>
             </View>
@@ -37,92 +50,70 @@ function News({data, isPreview}) {
     )
 }
 
-const previewStyle = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        margin: 3,
+        marginHorizontal: 2,
         backgroundColor: '#ecf0f1',
-        borderTopWidth: 1,
         borderBottomWidth: 1,
         borderColor: '#652435',
-        marginBottom: 10
+        marginBottom: 5
     },
+
     content: {
         justifyContent: 'center'
     },
+
+    textBox: {
+        marginTop: 20,
+        marginBottom: 20,
+        borderLeftWidth: 5,
+        borderLeftColor: ColorTheme.Modes.DARK
+    },
+
     titleBox: {
         flex: 1,
         width: 'auto',
         marginHorizontal: 0,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'flex-start'
     },
+
     title: {
-        fontSize: 40,
-        marginLeft: 5
+        fontSize: 17,
+        marginLeft: 5,
+        fontWeight: 'bold'
     },
+
     image: {
         width: 170,
-        height: 120
+        height: 120,
+        borderRadius: 5
     },
-    text: {
-        marginLeft: 8,
-        marginRight: 8,
-        marginBottom: 2,
-        textAlign: 'justify',
-        fontSize: 16
-    }
-})
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ecf0f1',
-        borderColor: '#652435',
-    },
-    content: {
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    title: {
-        fontSize: 35
-    },
-    image: {
-        width: 370,
-        height: 300,
-        borderColor: 'aquamarine',
-        marginTop: 20
-    },
-    textBox: {
-        marginTop: 20,
-        marginBottom: 20,
-        borderLeftWidth: 5,
-        borderLeftColor: 'blue'
-    },
-    text: {
-        marginLeft: 10,
-        marginRight: 10,
-        marginTop: 2,
-        marginBottom: 2,
-        textAlign: 'justify',
-        fontSize: 16
-    },
-    subjectBox: {
+    labelBox: {
         flex: 1,
         height: 24,
         width: 'auto',
         marginTop: 3,
         marginBottom: 3,
         marginHorizontal: 0,
-        paddingHorizontal: 2,
+        paddingHorizontal: 3,
         alignItems: 'center',
         justifyContent: 'center',
-        alignSelf: 'flex-start',
-        backgroundColor: '#006fa6'
+        alignSelf: 'flex-start'
     },
-    subjectText: {
+
+    text: {
+        marginLeft: 8,
+        marginRight: 8,
+        marginBottom: 2,
+        textAlign: 'justify',
+        fontSize: 16
+    },
+
+    labelText: {
         fontWeight: 'bold',
-        fontSize: 13,
-        color: '#FFF'
+        fontSize: 13
     }
 })
 

@@ -3,6 +3,8 @@ import { Dimensions } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator, createAppContainer } from 'react-navigation';
 
+import SearchProvider from './src/context/SearchCategory';
+
 import SideMenu from './src/components/SideMenu';
 import Drawer from './src/components/Drawer';
 
@@ -12,6 +14,8 @@ import Login from './src/pages/Login';
 import Register from './src/pages/Register';
 
 const { width } = Dimensions.get('window');
+
+import * as ColorTheme from './src/utils/ColorTheme';
 
 global.userIsLogged = false;
 
@@ -25,10 +29,9 @@ const MainScreens = createStackNavigator({
   },
   Post: {
     screen: Post,
-    navigationOptions: ({ navigation }) => ({
-      title: 'Ler Notícia',
-      headerLeft: () => (<Drawer toggleDrawer={navigation.toggleDrawer} />)
-    })
+    navigationOptions: {
+      title: 'Ler Notícia'
+    }
   }
 }, {
   initialRouteName: 'Feed',
@@ -64,7 +67,7 @@ const LoginScreens = createStackNavigator({
 }, {
   defaultNavigationOptions: {
     headerStyle: {
-      backgroundColor: '#006fa6'
+      backgroundColor: ColorTheme.Modes.DARK
     },
     headerBackTitleVisible: false,
     headerTintColor: '#FFF',
@@ -76,7 +79,7 @@ const LoginScreens = createStackNavigator({
   }
 });
 
-const App = createDrawerNavigator({
+const RootStack = createDrawerNavigator({
   MainStack: {
     screen: MainScreens
   },
@@ -89,4 +92,12 @@ const App = createDrawerNavigator({
   contentComponent: SideMenu
 });
 
-export default createAppContainer(App)
+const AppContainer = createAppContainer(RootStack);
+
+export default function App() {
+  return (
+    <SearchProvider>
+      <AppContainer />
+    </SearchProvider>
+  )
+}
