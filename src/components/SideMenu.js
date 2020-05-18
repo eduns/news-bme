@@ -28,7 +28,7 @@ export default function SideMenu({ navigation }) {
         <SafeAreaView style={styles.container}>
             <Image
                 style={styles.sideMenuImgProfile}
-                source={global.userIsLogged? {uri: global.user.imgProfile}: require('../assets/profile-placeholder.png')}
+                source={global.userIsLogged && global.user.imgProfile? {uri: global.user.imgProfile}: require('../assets/profile-placeholder.png')}
             />
 
             {global.userIsLogged? (

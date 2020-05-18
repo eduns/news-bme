@@ -12,48 +12,70 @@ export default function Login({ navigation }) {
     const [email, setEmail ] = useState('');
     const [password, setPassword] = useState('');
 
+    function validateFields() {
+        if(!email) {
+            Alert.alert('Entrar', 'Preencha o e-mail',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
+        if(!password) {
+            Alert.alert('Entrar', 'Preencha a senha',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
+        return true
+    }
+
     async function handleSubmit() {
-        const user = await store.get(`user_${email}`);
+        if(validateFields()) {
+            const user = await store.get(`user_${email}`);
 
-        if(user) {
-            if(user.email === email && user.password === password) {
-                global.userIsLogged = true;
-                global.user = user;
+            if(user) {
+                if(user.email === email && user.password === password) {
+                    global.userIsLogged = true;
+                    global.user = user;
 
-                setEmail('');
-                setPassword('')
+                    setEmail('');
+                    setPassword('')
 
-                const post = navigation.getParam('post');
+                    const post = navigation.getParam('post');
 
-                if(post) {
-                    navigation.dispatch(
-                        NavigationActions.navigate({
-                            routeName: 'MainStack',
-                            action: NavigationActions.navigate({
-                                routeName: 'Post',
-                                params: { post }
+                    if(post) {
+                        navigation.dispatch(
+                            NavigationActions.navigate({
+                                routeName: 'MainStack',
+                                action: NavigationActions.navigate({
+                                    routeName: 'Post',
+                                    params: { post }
+                                })
                             })
-                        })
-                    )
+                        )
+                    } else {
+                        navigation.dispatch(
+                            NavigationActions.navigate({
+                                routeName: 'MainStack',
+                                action: NavigationActions.navigate({ routeName: 'Feed' })
+                            })
+                        )
+                    }
                 } else {
-                    navigation.dispatch(
-                        NavigationActions.navigate({
-                            routeName: 'MainStack',
-                            action: NavigationActions.navigate({ routeName: 'Feed' })
-                        })
+                    Alert.alert('Entrar', 'E-mail ou senha incorretos',
+                        [ { text: 'Entendi' } ],
+                        { cancelable: false }
                     )
                 }
             } else {
-                Alert.alert('Entrar', 'E-mail ou senha incorretos',
+                Alert.alert('Entrar', 'Credenciais inexistentes',
                     [ { text: 'Entendi' } ],
                     { cancelable: false }
                 )
             }
-        } else {
-            Alert.alert('Entrar', 'Credenciais inexistentes',
-                [ { text: 'Entendi' } ],
-                { cancelable: false }
-            )
         }
     }
 

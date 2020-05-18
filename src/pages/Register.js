@@ -16,32 +16,70 @@ export default function Register({ navigation }) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [imgProfile, setImgProfile] = useState(null);
 
-    function handleSubmit() {
+    function validateFields() {
+        if(!name) {
+            Alert.alert('Cadastro', 'Preencha o nome',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
+        if(!email) {
+            Alert.alert('Cadastro', 'Preencha o e-mail',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
+        if(!password) {
+            Alert.alert('Cadastro', 'Preencha a senha',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
+        if(!confirmPassword) {
+            Alert.alert('Cadastro', 'Preencha a confirmação de senha',
+                [ { text: 'Entendi' } ],
+                { cancelable: false }
+            )
+            return false;
+        }
+
         if(password !== confirmPassword) {
             Alert.alert('Cadastro', 'As senhas não são iguais',
                 [ { text: 'Entendi' } ],
                 { cancelable: false }
             )
-            return;
+            return false;
         }
 
-        if(store.save(`user_${email}`, { name, email, password, imgProfile })) {
-            global.userIsLogged = true;
-            global.user = { name, email, password, imgProfile }
+        return true
+    }
 
-            navigation.dispatch(
-                NavigationActions.navigate({
-                    routeName: 'MainStack',
-                    action: NavigationActions.navigate({
-                        routeName: 'Feed'
+    function handleSubmit() {
+        if(validateFields()) {
+            if(store.save(`user_${email}`, { name, email, password, imgProfile })) {
+                global.userIsLogged = true;
+                global.user = { name, email, password, imgProfile }
+
+                navigation.dispatch(
+                    NavigationActions.navigate({
+                        routeName: 'MainStack',
+                        action: NavigationActions.navigate({
+                            routeName: 'Feed'
+                        })
                     })
-                })
-            )
-        } else {
-            Alert.alert('Cadastro', 'Ocorreu um erro no seu cadastro',
-                [ { text: 'Entendi' } ],
-                { cancelable: false }
-            )
+                )
+            } else {
+                Alert.alert('Cadastro', 'Ocorreu um erro no seu cadastro',
+                    [ { text: 'Entendi' } ],
+                    { cancelable: false }
+                )
+            }
         }
     }
 
