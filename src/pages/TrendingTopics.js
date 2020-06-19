@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
-import { useSearchCategory } from '../context/SearchCategory';
-
 import News from '../components/News';
 import Loader from '../components/Loader';
 
@@ -11,32 +9,29 @@ import api from '../services/api';
 
 import * as ColorTheme from '../utils/ColorTheme';
 
-export default function Feed({ navigation }) {
+export default function TrendingTopics({ navigation }) {
     const [news, setNews] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { searchCategory } = useSearchCategory();
+    const [loading, setLoading] = useState(false);
 
-    async function fetchNews() {
-        let params = { q: '', mkt: 'pt-br' };
+    async function fetchTopics() {
+        const params = { mkt: 'en-us' }
 
         try {
-            params = (searchCategory === 'ALL')? params : {...params, category: searchCategory };
+            setLoading(true)
 
-            setLoading(true);
+            const response = await api.get('/trendingtopics', { params })
 
-            const response = await api.get('/', { params });
-
-            setNews(response.data.value);
+            setNews(response.data.value)
 
             setLoading(false)
-        } catch(error) {
-            console.log('ERRO', error)
+        } catch (error) {
+            console.error('ERRO TRENDING', error)
         }
     }
 
     useEffect(() => {
-        fetchNews()
-    }, [searchCategory]);
+        fetchTopics()
+    }, [])
 
     return (
         <>
@@ -49,7 +44,7 @@ export default function Feed({ navigation }) {
 
         <FlatList
             data={news}
-            keyExtractor={item => item.url}
+            keyExtractor={item => item.newsSearchUrl}
             renderItem={({ item }) => (
                 <TouchableOpacity
                     activeOpacity={0.6}
@@ -60,21 +55,21 @@ export default function Feed({ navigation }) {
                                     routeName: 'LoginStack',
                                     action: NavigationActions.navigate({
                                         routeName: 'Login',
-                                        params: { post: item }
+                                        params: { post: item, isTrendingTopic: true }
                                     })
                                 })
                             )
                         } else {
-                            navigation.navigate('Post', { post: item })
+                            navigation.navigate('Post', { post: item, isTrendingTopic: true })
                         }
                     }}
                 >
-                    <News data={item} />
+                    <News data={item} isTrendingTopic={true} />
                 </TouchableOpacity>
             )}
         />
         </>
-    );
+    )
 }
 
 const styles = StyleSheet.create({

@@ -83,6 +83,23 @@ export default function SideMenu({ navigation }) {
                         </Text>
                     </TouchableOpacity>
 
+                    <TouchableOpacity
+                        activeOpacity={0.4}
+                        style={styles.menuItem}
+                        key={'TrendingTopics'}
+                        onPress={() => {
+                            goToScreen('TrendingTopics', 'MainStack')
+                        }}
+                        >
+                        <View style={styles.menuItemIcon}>
+                            <Ionicons name='md-trending-up' size={24} />
+                        </View>
+
+                        <Text style={styles.menuItemFont}>
+                            Trending Topics
+                        </Text>
+                    </TouchableOpacity>
+
                     {categoryUtil.CATEGORIES.map(category => (
                         <TouchableOpacity
                         activeOpacity={0.4}

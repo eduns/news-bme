@@ -4,45 +4,57 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import categoryUtil from '../utils/Category';
 import * as ColorTheme from '../utils/ColorTheme';
 
-function News({ data }) {
-    const datePublished = new Date(data.datePublished);
-    const [month, day, year] = datePublished.toLocaleDateString().split('/');
-    const [hour, minute] = datePublished.toLocaleTimeString().split(':');
+function News({ data, isTrendingTopic }) {
+    const datePublished = isTrendingTopic? null : new Date(data.datePublished);
+    const [month, day, year] = isTrendingTopic? [null, null, null] : datePublished.toLocaleDateString().split('/');
+    const [hour, minute] = isTrendingTopic? [null, null] : datePublished.toLocaleTimeString().split(':');
 
     return (
         <View style={styles.container}>
-            <View style={[styles.labelBox, {backgroundColor: ColorTheme.Modes.DARK}]}>
-                <Text style={[styles.labelText, {color: data.category? '#fff':'yellow'}]}>
-                    {data.category? categoryUtil.translate(data.category):'nocategory'}
-                </Text>
-            </View>
-            <View style={[styles.labelBox, {backgroundColor: '#fff'}]}>
-                <Text style={[styles.labelText, {color: ColorTheme.Modes.MILD}]}>
-                    Publicado em {day}/{month}/{year} às {hour}:{minute}
-                </Text>
-            </View>
+            {isTrendingTopic? null :
+                (
+                    <View style={[styles.labelBox, {backgroundColor: ColorTheme.Modes.DARK}]}>
+                        <Text style={[styles.labelText, {color: data.category? '#fff':'yellow'}]}>
+                            {data.category? categoryUtil.translate(data.category):'nocategory'}
+                        </Text>
+                    </View>
+                )
+            }
+
+            {isTrendingTopic? null :
+                (
+                    <View style={[styles.labelBox, {backgroundColor: '#fff'}]}>
+                        <Text style={[styles.labelText, {color: ColorTheme.Modes.MILD}]}>
+                            Publicado em {day}/{month}/{year} às {hour}:{minute}
+                        </Text>
+                    </View>
+                )
+            }
+
             <View style={styles.content}>
                 <View style={{ flexDirection: 'row' }}>
                     <>
                     <Image style={styles.image}
-                        source={{uri: data.image.thumbnail?
+                        source={{uri: isTrendingTopic? data.image.url :
+                            data.image.thumbnail?
                             data.image.thumbnail.contentUrl :
-                            require('../assets/noimageavailable.png') }}
+                            require('../assets/noimageavailable.png') }
+                        }
                     />
-                    <View style={styles.titleBox}>
+                    <View style={[styles.titleBox, { justifyContent: 'center'}]}>
                         <Text style={styles.title}>{data.name}</Text>
                     </View>
                     </>
                 </View>
                 <View style={[styles.labelBox,
-                    { backgroundColor: ColorTheme.Modes.GRAY, borderRadius: 5 }]}>
+                    {backgroundColor: ColorTheme.Modes.GRAY, borderRadius: 5}]}>
                     <Text style={[styles.labelText, {color: '#fff'}]}>
-                        {data.provider[0].name}
+                        {isTrendingTopic? data.image.provider[0].name: data.provider[0].name}
                     </Text>
                 </View>
                 <View style={styles.textBox}>
                     <Text style={styles.text}>
-                        {`${data.description} (...)`}
+                        {isTrendingTopic? data.query.text: `${data.description} (...)`}
                     </Text>
                 </View>
             </View>
