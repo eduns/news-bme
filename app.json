@@ -11,7 +11,7 @@
     "orientation": "portrait",
     "icon": "./assets/news-bme.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-news-bme.png",
       "resizeMode": "contain",
       "backgroundColor": "#1a8dd9"
     },
