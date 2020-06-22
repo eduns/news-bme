@@ -41,5 +41,19 @@ export default categoryUtil = {
             'Brazil': 'Brasil'
         }
         return categories[name] || name
+    },
+
+    category(name) {
+        const names = {
+            'Ciência e Tecnologia': 'ScienceAndTechnology',
+            'Negócios': 'Business',
+            'Entretenimento': 'Entertainment',
+            'Esportes': 'Sports',
+            'Política': 'Politics',
+            'Mundo': 'World',
+            'Brasil': 'Brazil'
+        }
+
+        return names[name]
     }
 }
