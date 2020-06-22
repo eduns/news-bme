@@ -13,6 +13,7 @@ import Post from './src/pages/Post';
 import Login from './src/pages/Login';
 import Register from './src/pages/Register';
 import TrendingTopics from './src/pages/TrendingTopics';
+import Chart from './src/pages/Chart';
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +39,12 @@ const MainScreens = createStackNavigator({
     screen: TrendingTopics,
     navigationOptions: {
       title: 'Trending Topics'
+    }
+  },
+  Chart: {
+    screen: Chart,
+    navigationOptions: {
+      title: 'Gráfico de Acessos'
     }
   }
 }, {

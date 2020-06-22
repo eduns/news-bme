@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, YellowBox } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import ModalDropDown from 'react-native-modal-dropdown';
 
@@ -12,6 +12,8 @@ import api from '../services/api';
 
 import categoryUtil from '../utils/Category';
 import * as ColorTheme from '../utils/ColorTheme';
+
+YellowBox.ignoreWarnings(['Warning: componentWillReceiveProps has been renamed, and is not recommended for use.'])
 
 export default function Feed({ navigation }) {
     const [news, setNews] = useState([]);
@@ -49,6 +51,7 @@ export default function Feed({ navigation }) {
             setCategories(categoriesNames);
             setNews(response.data.value);
             setFilteredNews(response.data.value);
+
             setLoading(false)
         } catch(error) {
             console.log('ERRO FEED', error)
@@ -128,6 +131,8 @@ export default function Feed({ navigation }) {
                             )
                         } else {
                             navigation.navigate('Post', { post: item })
+
+
                         }
                     }}
                 >

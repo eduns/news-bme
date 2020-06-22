@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -38,7 +38,7 @@ export default function SideMenu({ navigation }) {
                 </View>
             ): null}
 
-            <View style={styles.sideMenuContainer}>
+            <ScrollView contentContainerStyle={styles.sideMenuContainer}>
                 <View style={styles.divider} />
 
                 <View style={{ width: '100%' }}>
@@ -64,6 +64,24 @@ export default function SideMenu({ navigation }) {
                            {global.userIsLogged? 'Sair': 'Entrar'}
                         </Text>
                     </TouchableOpacity>
+
+                    {global.userIsLogged? (
+                    <TouchableOpacity
+                        activeOpacity={0.4}
+                        style={styles.menuItem}
+                        key={'Acesso'}
+                        onPress={() => {
+                            goToScreen('Chart', 'MainStack')
+                        }}
+                    >
+                        <View style={styles.menuItemIcon}>
+                            <Ionicons name='md-pie' size={24} />
+                        </View>
+
+                        <Text style={styles.menuItemFont}>
+                            Gráfico de Acesso
+                        </Text>
+                    </TouchableOpacity>) : null}
 
                     <TouchableOpacity
                         activeOpacity={0.4}
@@ -119,7 +137,7 @@ export default function SideMenu({ navigation }) {
                         </TouchableOpacity>
                     ))}
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
 
         <View style={styles.footerContainer}>

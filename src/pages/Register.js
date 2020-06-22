@@ -64,7 +64,7 @@ export default function Register({ navigation }) {
         if(validateFields()) {
             if(store.save(`user_${email}`, { name, email, password, imgProfile })) {
                 global.userIsLogged = true;
-                global.user = { name, email, password, imgProfile }
+                global.user = { name, email, password, imgProfile, accesses: [] }
 
                 navigation.dispatch(
                     NavigationActions.navigate({
